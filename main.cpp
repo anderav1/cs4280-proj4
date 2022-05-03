@@ -1,5 +1,5 @@
 // Lexi Anderson
-// CS4280, Proj 3
+// CS4280, Proj 4
 // main.cpp
 
 #include <fstream>
@@ -27,7 +27,8 @@ int main(int argc, char* argv[]) {
   
   node_t* root = parser(*fp);
   
-  // TODO: call static semantic function on the tree
+  // TODO: call code generation function on the tree
+  //generateCode(root);
   
   if (fp != &std::cin) delete fp;
   deleteTree(root);

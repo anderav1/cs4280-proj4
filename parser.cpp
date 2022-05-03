@@ -1,5 +1,5 @@
 // Lexi Anderson
-// CS4280, Proj 3
+// CS4280, Proj 4
 // parser.cpp
 
 #include <iostream>
@@ -90,7 +90,6 @@ node_t* S() {
     node->ch1 = getLeafNode(tkn.str);
     tkn = scanner(*fp);
     if (tkn.id == ID_TK) {
-      // TODO: check id semantics
       insert(symbolTable, tkn); //
       node->ch2 = getDecoratedNode("Identifier", tkn);
       tkn = scanner(*fp);

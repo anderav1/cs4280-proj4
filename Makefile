@@ -1,13 +1,13 @@
 # Lexi Anderson
-# CS4280, Proj 3
+# CS4280, Proj 4
 # Makefile
 
 
 CC = g++
 CFLAGS = -g -Wall -std=c++11
-OBJS = main.o parser.o scanner.o semantics.o list.o
-DEPS = parser.h scanner.h semantics.h list.h node.h token.h
-TARGET = statSem
+OBJS = main.o parser.o scanner.o semantics.o generateCode.o list.o
+DEPS = parser.h scanner.h semantics.h generateCode.h list.h node.h token.h
+TARGET = genCode
 
 $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^

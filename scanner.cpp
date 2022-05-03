@@ -1,5 +1,5 @@
 // Lexi Anderson
-// CS4280, Proj 3
+// CS4280, Proj 4
 // scanner.cpp
 
 #include <ctype.h>

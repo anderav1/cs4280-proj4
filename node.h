@@ -1,5 +1,5 @@
 // Lexi Anderson
-// CS4280, Proj 3
+// CS4280, Proj 4
 // node.h
 
 #ifndef NODE_H
