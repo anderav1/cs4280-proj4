@@ -26,9 +26,8 @@ int main(int argc, char* argv[]) {
   else if (argc == 1) fp = &std::cin;
   
   node_t* root = parser(*fp);
-  
-  // TODO: call code generation function on the tree
-  //generateCode(root);
+  // TODO: set up output file??????
+  genCode(root);
   
   if (fp != &std::cin) delete fp;
   deleteTree(root);
