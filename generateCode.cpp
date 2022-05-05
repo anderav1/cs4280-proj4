@@ -28,7 +28,7 @@ int newVar(std::string name, int val) {
   return val;
 }
 
-// Assign int value to a temporary variable
+// Create temporary variable to store int value
 // Return variable name
 std::string newTemp(int val) {
   std::string varName = "T" + std::to_string(++numTemps);
@@ -38,6 +38,7 @@ std::string newTemp(int val) {
   return varName;
 }
 
+// Create new assembly label to use in generated code
 std::string newLabel(std::string prefix) {
   std::string labelName = prefix + std::to_string(++numLabels);
   
@@ -81,6 +82,10 @@ void write(const char* fmt...) {
   va_end(args);
 }
 
+void writeVars() {
+  // TODO: implement
+}
+
 void genCode(node_t* root) {
   if (root == nullptr) return;
   
@@ -103,15 +108,11 @@ void genS(node_t* root) {
   newVar(varName, 0);  // value not yet read in from user
   write("READ %s\n", varName.c_str());
   
-  // <R>
   genR(root->ch5);
   
-  // <E>
   genE(root->ch6);
   
   write("STOP\n");
-  
-  // TODO: print variable initializations
   writeVars();
 }
 
