@@ -2,6 +2,7 @@
 // CS4280, Proj 4
 // generateCode.cpp
 
+#include <climits>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -191,27 +192,61 @@ std::string genD(node_t* root) {
   return varName;
 }
 
-// TODO!!!!!
 std::string genF(node_t* root) {
-  std::string varName;
+  std::string varNameX, varNameY, inLabel, outLabel, loopLabel;
   int x, y;
 
   if (root == nullptr) return "";
   
   if (root->ch2->label == "If") {
+    varNameX = ch3->decor->str;
+    x = getVal(varNameX);
+    varNameY = genW(root->ch5);
+    if (varNameY == "") exit(1);
+    y = getVal(varNameY);
+    
+    inLabel = newLabel("In");
+    outLabel = newLabel("Out");
+    
+    write("LOAD %d\n", y);
+    write("SUB %s\n", varNameX.c_str());
+  
     switch (root->ch4->label) {
       case "<<": // x < y
-      op1 = getVal(ch3->decor);
-      // TODO ...
-      
-      break;
+        write("BRPOS %s\n", inLabel.c_str());
+        break;
       case "<-": // x >= y
-      
-      
-      break;
+        write("BRZNEG %s\n", inLabel.c_str());
+        break;
     }
-  } else {
-  
+    
+    write("BR %s\n", outLabel.c_str());
+    write("%s: NOOP\n", inLabel.c_str());
+    genD(root->ch6);
+    write("BR %s\n", outLabel.c_str());
+    write("%s: NOOP\n", outLabel.c_str());
+  } else { // Do Again
+    varNameX = genW(root->ch6);
+    if (varNameX == "") exit(1);
+    x = getVal(varNameX);
+    
+    loopLabel = newLabel("Loop");
+    outLabel = newLabel("Out");
+    
+    write("%s: LOAD %s\n", loopLabel.c_str(), varNameX.c_str());
+    
+    switch (root->ch5->label) {
+      case "<<":
+        write("BRZPOS %s\n", outLabel.c_str());
+        break;
+      case "<-":
+        write("BRNEG %s\n", outLabel.c_str());
+        break;
+    }
+    
+    genD(root->ch4);
+    write("BR %s\n", loopLabel.c_str());
+    write("%s: NOOP\n", outLabel.c_str());
   }
   
   return varName;
@@ -337,8 +372,8 @@ std::string genL(node_t* root) {
   return varName;
 }
 
-// modifies vars
-int genW(node_t* root) {
+// Returns name of temp variable storing integer value
+std::string genW(node_t* root) {
   std::string varName, op;
   int x, y, result;
   
@@ -363,9 +398,10 @@ int genW(node_t* root) {
     
     acc = result;
   } else { // Num .
-    result = newTemp(stoi(root->ch1->decor->str));
+    result = stoi(root->ch1->decor->str);
     acc = result;
   }
   
-  return result;
+  varName = newTemp(result);
+  return varName;
 }

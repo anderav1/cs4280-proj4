@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdio.h>
 
+#include "generateCode.h"
 #include "node.h"
 #include "parser.h"
 

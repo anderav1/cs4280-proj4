@@ -26,6 +26,7 @@ void genB(node_t*);
 void genC(node_t*);
 
 // involve modification of values that may need to be returned
+// return names of variables to access
 std::string genD(node_t*);
 std::string genF(node_t*);
 void genG(node_t*);
@@ -33,7 +34,7 @@ std::string genH(node_t*);
 std::string genJ(node_t*);
 std::string genK(node_t*);
 std::string genL(node_t*);
-int genW(node_t*);
+std::string genW(node_t*);
 
 
 #endif
