@@ -11,6 +11,7 @@
 #include "parser.h"
 
 std::string fileName;
+std::string asmFileName;
 
 void printArgV(int, char*[]);
 

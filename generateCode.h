@@ -17,16 +17,16 @@ int getVarIndex(std::string);
 void write(const char* ...);
 void writeVars();
 
+// Code generation functions
+// may involve modification of values that need to be returned
+// return values are names of variables accessed
 void genCode(node_t*);
 void genS(node_t*);
 void genR(node_t*);
-void genE(node_t*);
-void genA(node_t*);
+std::string genE(node_t*);
+std::string genA(node_t*);
 void genB(node_t*);
 void genC(node_t*);
-
-// involve modification of values that may need to be returned
-// return names of variables to access
 std::string genD(node_t*);
 std::string genF(node_t*);
 void genG(node_t*);

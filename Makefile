@@ -19,6 +19,6 @@ $(OBJS): %.o: %.cpp $(DEPS)
 # clean up generated files
 .PHONY: clean
 clean:
-	rm -f $(TARGET) $(OBJS)
+	rm -f $(TARGET) $(OBJS) out/*
   
   

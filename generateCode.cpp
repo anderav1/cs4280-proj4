@@ -2,7 +2,11 @@
 // CS4280, Proj 4
 // generateCode.cpp
 
+#include <algorithm>
 #include <climits>
+#include <cstdarg>
+#include <cstdio>
+//#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -10,7 +14,7 @@
 #include "generateCode.h"
 #include "node.h"
 
-FILE* asmFile;
+std::string asmFile = "./out/code.asm";
 
 std::vector<std::string> varNames;
 std::vector<int> varVals;
@@ -40,6 +44,7 @@ std::string newTemp(int val) {
 }
 
 // Create new assembly label to use in generated code
+// Return label name
 std::string newLabel(std::string prefix) {
   std::string labelName = prefix + std::to_string(++numLabels);
   
@@ -77,18 +82,35 @@ int getVarIndex(std::string name) {
 
 // Write code to assembly file
 void write(const char* fmt...) {
+  FILE* fp;
+  fp = fopen(asmFile.c_str(), "a");
+
   va_list args;
   va_start(args, fmt);
-  vfprintf(asmFile, fmt, args);
+  vfprintf(fp, fmt, args);
   va_end(args);
+  
+  fclose(fp);
 }
 
+// Print assembly code that initializes vars
 void writeVars() {
-  // TODO: implement
+  int i;
+  
+  for (i = 0; i < (int)varNames.size(); i++) {
+    write("%s %d\n", varNames[i].c_str(), varVals[i]);
+  }
 }
+
+/* code generation functions */
 
 void genCode(node_t* root) {
   if (root == nullptr) return;
+  
+  // clear output file
+  FILE* fp;
+  fp = fopen(asmFile.c_str(), "w");
+  fclose(fp);
   
   if (root->label == "<S>") genS(root);
 }
@@ -99,13 +121,13 @@ void genS(node_t* root) {
   if (root == nullptr) return;
 
   // Name Id
-  varName = root->ch2->decor->str;
+  varName = root->ch2->decor.str;
   acc = newVar(varName, 0);
   write("LOAD %d\n", acc);
   write("STORE %s\n", varName.c_str());
 
   // Spot Id
-  varName = root->ch4->decor->str;
+  varName = root->ch4->decor.str;
   newVar(varName, 0);  // value not yet read in from user
   write("READ %s\n", varName.c_str());
   
@@ -119,37 +141,36 @@ void genS(node_t* root) {
 
 void genR(node_t* root) {
   if (root == nullptr) return;
-
-  // ignore Place
   
   genA(root->ch2);
-  
   genB(root->ch3);
-  
-  // ignore Home
 }
 
-void genE(node_t* root) {
+std::string genE(node_t* root) {
   std::string varName;
 
-  if (root == nullptr) return;
+  if (root == nullptr) return "";
 
   // Show Id
-  varName = root->ch2->decor->str;
+  varName = root->ch2->decor.str;
   write("WRITE %s\n", varName.c_str());
+  
+  return varName;
 }
 
-void genA(node_t* root) {
+std::string genA(node_t* root) {
   std::string varName;
 
-  if (root == nullptr) return;
+  if (root == nullptr) return "";
   
   // Name Id
-  varName = root->ch2->decor->str;
+  varName = root->ch2->decor.str;
   acc = newVar(varName, 0);
   
   write("LOAD %d\n", acc);
   write("STORE %s\n", varName.c_str());
+  
+  return varName;
 }
 
 void genB(node_t* root) {
@@ -184,7 +205,7 @@ std::string genD(node_t* root) {
   
   if (nextToken == "/") varName = genH(root->ch1);
   else if (nextToken == "Assign") varName = genJ(root->ch1);
-  else if (nextToken == "Spot" || nextLabel == "Move") varName = genK(root->ch1);
+  else if (nextToken == "Spot" || nextToken == "Move") varName = genK(root->ch1);
   else if (nextToken == "Flip") varName = genL(root->ch1);
   else if (nextToken == "Show") varName = genE(root->ch1);
   else varName = genF(root->ch1);
@@ -193,14 +214,13 @@ std::string genD(node_t* root) {
 }
 
 std::string genF(node_t* root) {
-  std::string varNameX, varNameY, inLabel, outLabel, loopLabel;
-  int x, y;
+  std::string varNameX, varNameY, op, inLabel, outLabel, loopLabel;
+  int y;
 
   if (root == nullptr) return "";
   
   if (root->ch2->label == "If") {
-    varNameX = ch3->decor->str;
-    x = getVal(varNameX);
+    varNameX = root->ch3->decor.str;
     varNameY = genW(root->ch5);
     if (varNameY == "") exit(1);
     y = getVal(varNameY);
@@ -211,14 +231,10 @@ std::string genF(node_t* root) {
     write("LOAD %d\n", y);
     write("SUB %s\n", varNameX.c_str());
   
-    switch (root->ch4->label) {
-      case "<<": // x < y
-        write("BRPOS %s\n", inLabel.c_str());
-        break;
-      case "<-": // x >= y
-        write("BRZNEG %s\n", inLabel.c_str());
-        break;
-    }
+    op = root->ch4->label;
+    if (op == "<<") write("BRPOS %s\n", inLabel.c_str());
+    else if (op == "<-") write("BRZNEG %s\n", inLabel.c_str());
+    else exit(1);
     
     write("BR %s\n", outLabel.c_str());
     write("%s: NOOP\n", inLabel.c_str());
@@ -228,28 +244,23 @@ std::string genF(node_t* root) {
   } else { // Do Again
     varNameX = genW(root->ch6);
     if (varNameX == "") exit(1);
-    x = getVal(varNameX);
     
     loopLabel = newLabel("Loop");
     outLabel = newLabel("Out");
     
     write("%s: LOAD %s\n", loopLabel.c_str(), varNameX.c_str());
     
-    switch (root->ch5->label) {
-      case "<<":
-        write("BRZPOS %s\n", outLabel.c_str());
-        break;
-      case "<-":
-        write("BRNEG %s\n", outLabel.c_str());
-        break;
-    }
+    op = root->ch5->label;
+    if (op == "<<") write("BRZPOS %s\n", outLabel.c_str());
+    else if (op == "<-") write("BRNEG %s\n", outLabel.c_str());
+    else exit(1);
     
     genD(root->ch4);
     write("BR %s\n", loopLabel.c_str());
     write("%s: NOOP\n", outLabel.c_str());
   }
   
-  return varName;
+  return varNameX;
 }
 
 // resets acc
@@ -258,7 +269,7 @@ void genG(node_t* root) {
 
   if (root == nullptr) return;
   
-  int x = stoi(root->ch2->decor->str);
+  int x = stoi(root->ch2->decor.str);
   
   // store num in temp var
   varName = newTemp(x);
@@ -286,9 +297,9 @@ std::string genH(node_t* root) {
   z_prod = root->ch2->ch1;
   
   if (z_prod->label == "Identifier") {
-    varName = z_prod->decor->str;
+    varName = z_prod->decor.str;
   } else { // Number
-    nodeStr = z_prod->decor->str;
+    nodeStr = z_prod->decor.str;
     varName = newTemp(stoi(nodeStr));
   }
   
@@ -304,13 +315,12 @@ std::string genH(node_t* root) {
 // modifies variables -- update vars vector and acc
 std::string genJ(node_t* root) {
   std::string varNameX, varNameY;
-  int x, y;
+  int y;
   
   if (root == nullptr) return "";
   
   // Assign Id
-  varNameX = root->ch2->decor->str;
-  x = getVal(varNameX);
+  varNameX = root->ch2->decor.str;
   
   varNameY = genD(root->ch3);
   y = getVal(varNameY);
@@ -331,7 +341,7 @@ std::string genK(node_t* root) {
   if (root == nullptr) return "";
   
   if (root->ch1->label == "Spot") { // Spot Num Show Num
-    x = stoi(root->ch2->decor->str);
+    x = stoi(root->ch2->decor.str);
     varName = newTemp(x);
     
     write("LOAD %x\n", x);
@@ -340,7 +350,7 @@ std::string genK(node_t* root) {
     
     acc = x;
   } else { // Move Id Show Id
-    varName = newVar(root->ch2->decor->str);
+    varName = newVar(root->ch2->decor.str, 0);
     
     write("LOAD %s\n", varName.c_str());
     write("WRITE %s\n", varName.c_str());
@@ -359,7 +369,7 @@ std::string genL(node_t* root) {
   if (root == nullptr) return "";
   
   // Flip Id
-  varName = root->ch2->decor->str;
+  varName = root->ch2->decor.str;
   x = getVal(varName);
   x = x * -1;
   
@@ -374,34 +384,28 @@ std::string genL(node_t* root) {
 
 // Returns name of temp variable storing integer value
 std::string genW(node_t* root) {
-  std::string varName, op;
+  std::string varNameRes, varNameX, varNameY, op;
   int x, y, result;
   
   if (root == nullptr) return "";
   
   if (root->ch3 != nullptr) { // Num <V> Num
     op = root->ch2->ch1->label;
-    x = newTemp(stoi(root->ch1->decor->str));
-    y = newTemp(stoi(root->ch3->decor->str));
+    varNameX = newTemp(std::stoi(root->ch1->decor.str));
+    varNameY = newTemp(std::stoi(root->ch3->decor.str));
+    if (varNameX == "" || varNameY == "") exit(1);
+    x = getVal(varNameX);
+    y = getVal(varNameY);
     
-    switch (op) {
-      case "+":
-        result = newTemp(x + y);
-        break;
-      case "%":
-        result = newTemp(x / y);
-        break;
-      case "&":
-        result = newTemp(x * y);
-        break;
-    }
-    
-    acc = result;
+    if (op == "+") result = x + y;
+    else if (op == "%") result = x / y;
+    else if (op == "&") result = x * y;
+    else exit(1);
   } else { // Num .
-    result = stoi(root->ch1->decor->str);
-    acc = result;
+    result = std::stoi(root->ch1->decor.str);
   }
   
-  varName = newTemp(result);
-  return varName;
+  acc = result;
+  varNameRes = newTemp(result);
+  return varNameRes;
 }
