@@ -6,7 +6,6 @@
 #include <climits>
 #include <cstdarg>
 #include <cstdio>
-//#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -146,6 +145,7 @@ void genR(node_t* root) {
   genB(root->ch3);
 }
 
+// Returns name of variable in use
 std::string genE(node_t* root) {
   std::string varName;
 
@@ -158,6 +158,7 @@ std::string genE(node_t* root) {
   return varName;
 }
 
+// Returns name of created variable
 std::string genA(node_t* root) {
   std::string varName;
 
@@ -195,7 +196,7 @@ void genC(node_t* root) {
   else genG(root->ch1);
 }
 
-// modifies vars
+// Returns name of variable in use
 std::string genD(node_t* root) {
   std::string varName, nextToken;
 
@@ -213,6 +214,7 @@ std::string genD(node_t* root) {
   return varName;
 }
 
+// Returns name of variable being monitored
 std::string genF(node_t* root) {
   std::string varNameX, varNameY, op, inLabel, outLabel, loopLabel;
   int y;
@@ -286,7 +288,7 @@ void genG(node_t* root) {
   acc = 0;
 }
 
-// modifies variables
+// Returns name of temp variable storing integer value
 std::string genH(node_t* root) {
   std::string varName, nodeStr;
   node_t* z_prod;
@@ -312,7 +314,7 @@ std::string genH(node_t* root) {
   return varName;
 }
 
-// modifies variables -- update vars vector and acc
+// Returns name of modified variable
 std::string genJ(node_t* root) {
   std::string varNameX, varNameY;
   int y;
@@ -333,7 +335,7 @@ std::string genJ(node_t* root) {
   return varNameX;
 }
 
-// modifies vars
+// Returns name of created variable
 std::string genK(node_t* root) {
   std::string varName;
   int x;
@@ -361,7 +363,7 @@ std::string genK(node_t* root) {
   return varName;
 }
 
-// modifies vars
+// Returns name of modified variable
 std::string genL(node_t* root) {
   std::string varName;
   int x;

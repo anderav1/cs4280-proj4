@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
   else if (argc == 1) fp = &std::cin;
   
   node_t* root = parser(*fp);
-  // TODO: set up output file??????
+  // note: output file set up in genCode
   genCode(root);
   
   if (fp != &std::cin) delete fp;
