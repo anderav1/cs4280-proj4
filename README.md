@@ -7,6 +7,33 @@ Generate assembly code for an input program.
 
 Target language is [VM ACC assembly language](https://comp.umsl.edu/assembler/interpreter).
 
+## Expected Output
+Input will be either a text file or standard input stream. Valid input will contain a program written in the previously defined high-level language. Output for valid input will be an .asm file containing assembly code generated from the input code. Program will throw error if input contains any syntax or semantics errors.
+
+Example input:
+```
+Name prog1
+Spot prog2
+Place
+Name id1
+Home
+Show prog2
+```
+
+Output .asm file:
+```
+LOAD 0
+STORE prog1
+READ prog2
+LOAD 0
+STORE id1
+WRITE prog2
+STOP
+prog1 0
+prog2 0
+id1 0
+```
+
 ## Grammar Semantics
 - Delimiters: `{`, `}`, `.`, `Place`, `Home`
 - Operators:
