@@ -9,14 +9,16 @@ Target language is [VM ACC assembly language](https://comp.umsl.edu/assembler/in
 ## Grammar Semantics
 - Delimiters: `{`, `}`, `.`, `Place`, `Home`
 - Operators:
+  
+  *Operators have no precedence and are left associative.*
   | Symbol | Meaning |
+  | ------ | ------- |
   | `<<` | less than |
   | `<-` | greater than or equal to |
   | `/` | decrement |
   | `+` | addition |
   | `%` | division (truncated) |
   | `&` | multiplication |
-  Operators have no precedence and are left associative.
   
 - `Name identifier` allocates memory for `identifier` and initializes its value to zero
 - `Assign identifier M` assigns the value of M to `identifier`
