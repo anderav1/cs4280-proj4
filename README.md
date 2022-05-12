@@ -1,9 +1,10 @@
 # CS 4280 Project 4: Code Generation
-# Spring 2022
+Spring 2022  
 Continued from Project 3: Static Semantics
 
 ## Objective
-Generate assembly code for an input program.
+Generate assembly code for an input program.  
+
 Target language is [VM ACC assembly language](https://comp.umsl.edu/assembler/interpreter).
 
 ## Grammar Semantics
@@ -34,5 +35,5 @@ Target language is [VM ACC assembly language](https://comp.umsl.edu/assembler/in
 - `Flip identifier` multiplies the value of `identifier` by -1 and stores the result in `identifier`
 - `Here number There` writes `number` to the monitor for `number` times
 
-All data values are 2-byte signed integers.
-Operations are assumed to have no overflow.
+*All data values are represented as 2-byte signed integers.*  
+*Operations are assumed to have no overflow.*
