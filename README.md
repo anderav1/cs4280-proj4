@@ -25,8 +25,8 @@ Target language is [VM ACC assembly language](https://comp.umsl.edu/assembler/in
 - `Assign identifier M` assigns the value of M to `identifier`
 - `{ If identifier T W D }` performs D if and only if `identifier T W` is true
 - `{ Do Again D T W }` repeats D until `T W 0` is false
-  - if T is `<<`, repeat D until W >= 0
-  - if T is `<-`, repeat D until W < 0
+  - if T is `<<`, repeat D until `W >= 0`
+  - if T is `<-`, repeat D until `W < 0`
 - `Spot number` loads `number` into the accumulator (ACC)
 - `Spot identifier` reads in an integer value from the user and stores it in new `identifier`
 - `Show number` writes `number` to the monitor
