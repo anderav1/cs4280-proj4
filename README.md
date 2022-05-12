@@ -64,3 +64,40 @@ id1 0
 
 *All data values are represented as 2-byte signed integers.*  
 *Operations are assumed to have no overflow.*
+
+## Static Semantics
+- Variables are declared using `Name identifier` and `Spot identifier`
+- Variables must be declared before they can be used for the first time
+- A variable name may only be defined once
+
+## BNF Grammar
+\<S> is the starting nonterminal.  
+  
+\<S> -> Name Identifier Spot Identifier \<R> \<E>  
+\<R> -> Place \<A> \<B> Home  
+\<E> -> Show Identifier  
+\<A> -> Name Identifier  
+\<B> -> empty | . \<C> . \<B> | \<D> \<B>  
+\<C> -> \<F> | \<G>  
+\<D> -> \<H> | \<J> | \<K> | \<L> | \<E> | \<F>  
+\<F> -> { If Identifier \<T> \<W> \<D> } | { Do Again \<D> \<T> \<W> }  
+\<G> -> Here Number There  
+\<T> -> << | <-  
+\<V> -> + | % | &  
+\<H> -> / \<Z>  
+\<J> -> Assign Identifier \<D>  
+\<K> -> Spot Number Show Number | Move Identifier Show Identifier  
+\<L> -> Flip Identifier  
+\<W> -> Number \<V> Number | Number .  
+\<Z> -> Identifier | Number  
+
+## Lexical Definitions
+- All tokens in grammar are case sensitive
+- *Alphabet:* a-z A-Z 0-9 & + / % . { } << <- whitespace
+- Any character outside of the alphabet will generate an error
+- *Identifiers:* begin with a lowercase letter (a-z) and continue with one or more alphanumerics
+- *Keywords:* `Again`, `If`, `Assign`, `Move`, `Show`, `Flip`, `Name`, `Home`, `Do`, `Spot`, `Place`, `Here`, `There`
+- *Operators and delimiters:* `&`, `+`, `/`, `%`, `.`, `{`, `}`, `<<`, `<-`
+- *Numbers:* any sequence of decimal digits (0-9), no sign or decimal point
+- *Comments:* start with \* and end with \*
+
