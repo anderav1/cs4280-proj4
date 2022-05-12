@@ -99,5 +99,5 @@ id1 0
 - *Keywords:* `Again`, `If`, `Assign`, `Move`, `Show`, `Flip`, `Name`, `Home`, `Do`, `Spot`, `Place`, `Here`, `There`
 - *Operators and delimiters:* `&`, `+`, `/`, `%`, `.`, `{`, `}`, `<<`, `<-`
 - *Numbers:* any sequence of decimal digits (0-9), no sign or decimal point
-- *Comments:* start with \* and end with \*
+- *Comments:* start with `*` and end with `*`
 
